@@ -21,14 +21,17 @@ class App:
         self.start()
         self.window.mainloop()
 
+    def clear(self):
+        for widget in self.main_frame.winfo_children():
+            widget.destroy()
+
     def start(self) -> None:
+        self.clear()
         self.quiestion_index = 0
         self.right_anwers = 0
         self.wrong_anwers = 0
         if self.shuffle_questions:
             random.shuffle(questions)
-            for widget in self.main_frame.winfo_children():
-                widget.destroy()
         self.show_question()
 
     def show_question(self) -> None:
@@ -38,17 +41,16 @@ class App:
             tkinter.Button(
                 self.main_frame,
                 text=answer,
-                command=lambda: self.on_button(answer)
-            ).pack()
+                command=lambda arg=answer: self.on_button(arg),
+            ).pack(side='left', padx=60, pady=60)
 
     def on_button(self, button_text) -> None:
+        self.clear()
         question = questions[self.quiestion_index]
-        if button_text != question['индекс правильного ответа']:
+        if button_text == question['индекс правильного ответа']:
             self.right_anwers += 1
-            print('привет')
         else:
             self.wrong_anwers += 1
-            print('не привет')
 
         for widget in self.main_frame.winfo_children():
             widget.destroy()
@@ -61,11 +63,16 @@ class App:
 
     def show_result(self) -> None:
         '''Показывает результат викторины'''
-        tkinter.Label(self.main_frame, text='Викторина завершена!').pack()
-        tkinter.Label(self.main_frame, text=f'Всего вопросов: {len(questions)}').pack()
-        tkinter.Label(self.main_frame, text=f'Правильных ответов: {self.right_anwers}').pack()
-        tkinter.Label(self.main_frame, text=f'Ошибок: {self.wrong_anwers}').pack()
-        tkinter.Button(self.main_frame, text='начать заного', command=self.start).pack()
+        tkinter.Label(self.main_frame, 
+                      text='Викторина завершена!').pack()
+        tkinter.Label(self.main_frame, 
+                      text=f'Всего вопросов: {len(questions)}').pack()
+        tkinter.Label(self.main_frame, 
+                      text=f'Правильных ответов: {self.right_anwers}').pack()
+        tkinter.Label(self.main_frame, 
+                      text=f'Ошибок: {self.wrong_anwers}').pack()
+        tkinter.Button(self.main_frame, text='начать заново', 
+                       command=self.start).pack()
 
 
 App(shuffle_questions=True)
